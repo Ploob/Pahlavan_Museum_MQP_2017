@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">iBeacon Museum</string>
+    <string name="title_activity_ranging">RangingActivity</string>
+</resources>
