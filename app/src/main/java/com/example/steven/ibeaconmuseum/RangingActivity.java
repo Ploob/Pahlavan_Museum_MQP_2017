@@ -65,6 +65,7 @@ public class RangingActivity extends Activity implements BeaconConsumer{
             @Override
             public void run() {
                 // Change edittext, etc.
+
             }
         });
     }

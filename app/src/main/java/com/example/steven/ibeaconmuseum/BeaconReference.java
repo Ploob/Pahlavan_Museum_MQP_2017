@@ -4,7 +4,9 @@ import android.app.Application;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 
+import org.altbeacon.beacon.BeaconConsumer;
 import org.altbeacon.beacon.BeaconManager;
 import org.altbeacon.beacon.BeaconParser;
 import org.altbeacon.beacon.Region;
@@ -17,7 +19,7 @@ May be depreciated at a later date, but for now holds init code
 Moves to external classes with layouts, etc.
  */
 
-public class BeaconReference extends Application{
+public class BeaconReference extends Application implements BeaconConsumer{
 
     // BLE packet contents, change to search per id and manufacturer
     // 0x4c000215 is the iBeacon manu. code
@@ -41,14 +43,24 @@ public class BeaconReference extends Application{
         backgroundPowerSaver = new BackgroundPowerSaver(this);
     }
 
+    /*
     @Override
     public void didEnterRegion(Region arg0){
         if(!haveDetectedBeaconsSinceBoot){
             // First time beacons have been seen since launch
+            Log.d("beaconReference", "Saw beacons for the first time");
             Intent intent = new Intent(this, RangingActivity.class);
             this.startActivity(intent);
             haveDetectedBeaconsSinceBoot = true;
+        }else{
+
         }
+    }*/
+    @Override
+    public void onBeaconServiceConnect(){
+        Intent intent = new Intent(this, RangingActivity.class);
+        this.startActivity(intent);
+        haveDetectedBeaconsSinceBoot = true;
     }
 
 
