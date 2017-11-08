@@ -2,11 +2,13 @@ package com.example.steven.ibeaconmuseum;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.EditText;
 
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.BeaconConsumer;
@@ -15,10 +17,17 @@ import org.altbeacon.beacon.RangeNotifier;
 import org.altbeacon.beacon.Region;
 
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.UUID;
 
 public class RangingActivity extends Activity implements BeaconConsumer{
 
     private BeaconManager beaconManager = BeaconManager.getInstanceForApplication(this);
+    private LinkedList<UUID> seenUuids = new LinkedList<UUID>(){}; // List of UUIDs seen so far by the phone
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +73,7 @@ public class RangingActivity extends Activity implements BeaconConsumer{
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                EditText readingText
                 // Change edittext, etc.
 
             }
