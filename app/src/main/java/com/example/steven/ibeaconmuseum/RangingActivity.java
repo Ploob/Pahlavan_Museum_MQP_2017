@@ -13,6 +13,7 @@ import android.widget.EditText;
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.BeaconConsumer;
 import org.altbeacon.beacon.BeaconManager;
+import org.altbeacon.beacon.Identifier;
 import org.altbeacon.beacon.RangeNotifier;
 import org.altbeacon.beacon.Region;
 
@@ -26,7 +27,7 @@ import java.util.UUID;
 public class RangingActivity extends Activity implements BeaconConsumer{
 
     private BeaconManager beaconManager = BeaconManager.getInstanceForApplication(this);
-    private LinkedList<UUID> seenUuids = new LinkedList<UUID>(){}; // List of UUIDs seen so far by the phone
+    private LinkedList<Identifier> seenIdentifiers = new LinkedList<Identifier>(){}; // List of UUIDs seen so far by the phone
 
 
     @Override
@@ -62,20 +63,26 @@ public class RangingActivity extends Activity implements BeaconConsumer{
             public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) {
                 if (beacons.size() > 0){
                     Beacon firstBeacon = beacons.iterator().next();
+                    Identifier beaconIdentifier = firstBeacon.getId1();
+                    if(!seenIdentifiers.contains(beaconIdentifier)){
+                        seenIdentifiers.add(firstBeacon.getId1());
+                    }
+
                     // TODO: Change UI elements to reflect readings
-                    changeui();
+                    changeui(beaconIdentifier, firstBeacon.getRssi());
                 }
             }
         });
     }
 
-    private void changeui(){
+    private void changeui(final Identifier id, final int rssi){
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                EditText readingText
                 // Change edittext, etc.
-
+                EditText readingText = (EditText)RangingActivity.this.findViewById(R.id.readingText);
+                String line = "Beacon Id0: " + id.toHexString() + " Beacon RSSI: " + rssi;
+                readingText.append(line + "\n");
             }
         });
     }
