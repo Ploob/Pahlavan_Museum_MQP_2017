@@ -19,7 +19,7 @@ May be depreciated at a later date, but for now holds init code
 Moves to external classes with layouts, etc.
  */
 
-public class BeaconReference extends Application implements BeaconConsumer{
+public class BeaconReference extends Application implements BootstrapNotifier{
 
     // BLE packet contents, change to search per id and manufacturer
     // 0x4c000215 is the iBeacon manu. code
@@ -43,7 +43,7 @@ public class BeaconReference extends Application implements BeaconConsumer{
         backgroundPowerSaver = new BackgroundPowerSaver(this);
     }
 
-    /*
+
     @Override
     public void didEnterRegion(Region arg0){
         if(!haveDetectedBeaconsSinceBoot){
@@ -55,13 +55,27 @@ public class BeaconReference extends Application implements BeaconConsumer{
         }else{
 
         }
-    }*/
+    }
+
+    @Override
+    public void didExitRegion(Region region){
+
+    }
+
+    @Override
+    public void didDetermineStateForRegion(int state, Region region) {
+        //if (rangingActivity != null) {
+        //    rangingActivity.logToDisplay("I have just switched from seeing/not seeing beacons: " + state);
+        //}
+    }
+
+    /*
     @Override
     public void onBeaconServiceConnect(){
         Intent intent = new Intent(this, RangingActivity.class);
         this.startActivity(intent);
         haveDetectedBeaconsSinceBoot = true;
     }
-
+    */
 
 }

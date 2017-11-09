@@ -63,18 +63,19 @@ public class RangingActivity extends Activity implements BeaconConsumer{
             public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) {
                 if (beacons.size() > 0){
                     Beacon firstBeacon = beacons.iterator().next();
-                    Identifier beaconIdentifier = firstBeacon.getId1();
+                    /*Identifier beaconIdentifier = firstBeacon.getId1();
                     if(!seenIdentifiers.contains(beaconIdentifier)){
                         seenIdentifiers.add(firstBeacon.getId1());
-                    }
+                    }*/
+                    logToDisplay("Beacon: " + firstBeacon.toString() + " RSSI:  " + /*firstBeacon.getDistance()*/firstBeacon.getRssi());
 
                     // TODO: Change UI elements to reflect readings
-                    changeui(beaconIdentifier, firstBeacon.getRssi());
+                    //changeui(beaconIdentifier, firstBeacon.getRssi());
                 }
             }
         });
     }
-
+/*
     private void changeui(final Identifier id, final int rssi){
         runOnUiThread(new Runnable() {
             @Override
@@ -83,6 +84,15 @@ public class RangingActivity extends Activity implements BeaconConsumer{
                 EditText readingText = (EditText)RangingActivity.this.findViewById(R.id.readingText);
                 String line = "Beacon Id0: " + id.toHexString() + " Beacon RSSI: " + rssi;
                 readingText.append(line + "\n");
+            }
+        });
+    }
+    */
+    private void logToDisplay(final String line) {
+        runOnUiThread(new Runnable() {
+            public void run() {
+                EditText editText = (EditText)RangingActivity.this.findViewById(R.id.readingText);
+                editText.append(line+"\n");
             }
         });
     }
