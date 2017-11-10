@@ -2,6 +2,7 @@ package com.example.steven.ibeaconmuseum;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.RemoteException;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -74,6 +75,10 @@ public class RangingActivity extends Activity implements BeaconConsumer{
                 }
             }
         });
+
+        try {
+            beaconManager.startRangingBeaconsInRegion(new Region("myRangingUniqueId", null, null, null));
+        } catch (RemoteException e) {   }
     }
 /*
     private void changeui(final Identifier id, final int rssi){
@@ -91,7 +96,7 @@ public class RangingActivity extends Activity implements BeaconConsumer{
     private void logToDisplay(final String line) {
         runOnUiThread(new Runnable() {
             public void run() {
-                EditText editText = (EditText)RangingActivity.this.findViewById(R.id.readingText);
+                EditText editText = RangingActivity.this.findViewById(R.id.readingText);
                 editText.append(line+"\n");
             }
         });
