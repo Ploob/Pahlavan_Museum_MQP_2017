@@ -17,12 +17,17 @@ import org.altbeacon.beacon.Identifier;
 import org.altbeacon.beacon.RangeNotifier;
 import org.altbeacon.beacon.Region;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Map;
+import java.util.Set;
 
 public class RangingActivity extends Activity implements BeaconConsumer{
 
     private BeaconManager beaconManager = BeaconManager.getInstanceForApplication(this);
-    private LinkedList<Identifier> seenIdentifiers = new LinkedList<Identifier>(){}; // List of UUIDs seen so far by the phone
+    //private LinkedList<Identifier> seenIdentifiers = new LinkedList<Identifier>(){}; // List of UUIDs seen so far by the phone
+    private HashMap<Identifier, Integer> seenBeaconsHashmap = new HashMap<Identifier, Integer>();
     private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
 
 
@@ -77,17 +82,32 @@ public class RangingActivity extends Activity implements BeaconConsumer{
         beaconManager.setRangeNotifier(new RangeNotifier() {
             @Override
             public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) {
-                if (beacons.size() > 0){
-                    Beacon firstBeacon = beacons.iterator().next();
+                if(beacons.size() > 0){
+                    for(Iterator<Beacon> iterator = beacons.iterator(); iterator.hasNext();){
+                        Beacon thisBeacon = iterator.next();
+
+                        seenBeaconsHashmap.put(thisBeacon.getId3(), thisBeacon.getRssi());
+
+
+                        //String line = "Beacon Minor: " + thisBeacon.getId3() + " RSSI: " + thisBeacon.getRssi();
+                        //logToDisplay(line);
+                        updateBeaconUiList();
+
+                    }
+                }
+
+                //if (beacons.size() > 0){
+                //   Beacon firstBeacon = beacons.iterator().next();
                     /*Identifier beaconIdentifier = firstBeacon.getId1();
                     if(!seenIdentifiers.contains(beaconIdentifier)){
                         seenIdentifiers.add(firstBeacon.getId1());
                     }*/
-                    logToDisplay("Beacon: " + firstBeacon.toString() + " RSSI:  " + /*firstBeacon.getDistance()*/firstBeacon.getRssi());
+                //    logToDisplay("Beacon: " + firstBeacon.getId3().toString() + " RSSI:  " + /*firstBeacon.getDistance()*/firstBeacon.getRssi());
+                    //logToDisplay("C\n");
 
                     // TODO: Change UI elements to reflect readings
                     //changeui(beaconIdentifier, firstBeacon.getRssi());
-                }
+                //}
             }
         });
 
@@ -112,7 +132,27 @@ public class RangingActivity extends Activity implements BeaconConsumer{
         runOnUiThread(new Runnable() {
             public void run() {
                 EditText editText = RangingActivity.this.findViewById(R.id.readingText);
-                editText.append(line+"\n");
+                // TODO Figure out why the fuck the text doesn't take the newline character
+                editText.append('\n'+line);
+                //editText.setText(line);
+            }
+        });
+    }
+
+    private void updateBeaconUiList(){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                EditText editText = RangingActivity.this.findViewById(R.id.readingText);
+
+                String editTextContents = "";
+                Set set = seenBeaconsHashmap.entrySet();
+                Iterator iterator = set.iterator();
+                while(iterator.hasNext()){
+                    Map.Entry mentry = (Map.Entry)iterator.next();
+                    editTextContents = editTextContents + "Minor ID: " + mentry.getKey().toString() + "RSSI: " + mentry.getValue().toString() + '\n';
+                }
+                editText.setText(editTextContents);
             }
         });
     }
