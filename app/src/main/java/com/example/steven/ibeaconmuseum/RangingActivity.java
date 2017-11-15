@@ -4,12 +4,15 @@ import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ListActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.RemoteException;
+import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.BeaconConsumer;
@@ -17,6 +20,8 @@ import org.altbeacon.beacon.BeaconManager;
 import org.altbeacon.beacon.Identifier;
 import org.altbeacon.beacon.RangeNotifier;
 import org.altbeacon.beacon.Region;
+
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -24,7 +29,17 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 
-public class RangingActivity extends Activity implements BeaconConsumer{
+public class RangingActivity extends ListActivity implements BeaconConsumer{
+
+    //LIST OF ARRAY STRINGS WHICH WILL SERVE AS LIST ITEMS
+    ArrayList<String> listItems=new ArrayList<String>();
+
+    //DEFINING A STRING ADAPTER WHICH WILL HANDLE THE DATA OF THE LISTVIEW
+    ArrayAdapter<String> adapter;
+
+    //RECORDING HOW MANY TIMES THE BUTTON HAS BEEN CLICKED
+    int clickCounter=0;
+
 
     private BeaconManager beaconManager = BeaconManager.getInstanceForApplication(this);
     //private LinkedList<Identifier> seenIdentifiers = new LinkedList<Identifier>(){}; // List of UUIDs seen so far by the phone
@@ -37,7 +52,10 @@ public class RangingActivity extends Activity implements BeaconConsumer{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ranging);
 
-
+        adapter=new ArrayAdapter<String>(this,
+                android.R.layout.simple_list_item_1,
+                listItems);
+        setListAdapter(adapter);
 
         verifyBluetooth();
 
@@ -153,7 +171,7 @@ public class RangingActivity extends Activity implements BeaconConsumer{
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                EditText editText = RangingActivity.this.findViewById(R.id.readingText);
+                //EditText editText = RangingActivity.this.findViewById(R.id.readingText);
 
                 String editTextContents = "";
                 Set set = seenBeaconsHashmap.entrySet();
@@ -162,7 +180,11 @@ public class RangingActivity extends Activity implements BeaconConsumer{
                     Map.Entry mentry = (Map.Entry)iterator.next();
                     editTextContents = editTextContents + "Minor ID: " + mentry.getKey().toString() + "RSSI: " + mentry.getValue().toString() + '\n';
                 }
-                editText.setText(editTextContents);
+
+                listItems.add(editTextContents);
+                adapter.notifyDataSetChanged();
+
+                //editText.setText(editTextContents);
             }
         });
     }
@@ -204,6 +226,12 @@ public class RangingActivity extends Activity implements BeaconConsumer{
 
         }
 
+    }
+
+    //METHOD WHICH WILL HANDLE DYNAMIC INSERTION
+    public void addItems(View v) {
+        listItems.add("Clicked : "+clickCounter++);
+        adapter.notifyDataSetChanged();
     }
 
 }
