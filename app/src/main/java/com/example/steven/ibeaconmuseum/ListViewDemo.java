@@ -7,7 +7,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 
 import java.util.ArrayList;
-
+// TODO CLASS TO BE REMOVED
 public class ListViewDemo extends ListActivity {
 
     //LIST OF ARRAY STRINGS WHICH WILL SERVE AS LIST ITEMS
