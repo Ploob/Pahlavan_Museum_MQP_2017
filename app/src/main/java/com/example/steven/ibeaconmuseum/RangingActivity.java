@@ -102,8 +102,8 @@ public class RangingActivity extends ListActivity implements BeaconConsumer{
     @Override
     public void onBeaconServiceConnect(){
 
-        Intent intent = new Intent(this, ListViewDemo.class);
-        this.startActivity(intent);
+        //Intent intent = new Intent(this, ListViewDemo.class);
+        //this.startActivity(intent);
 
         beaconManager.setRangeNotifier(new RangeNotifier() {
             @Override
