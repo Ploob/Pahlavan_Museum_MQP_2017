@@ -43,6 +43,9 @@ public class BeaconReference extends Application implements BootstrapNotifier{
     @Override
     public void didEnterRegion(Region arg0){
         if(!haveDetectedBeaconsSinceBoot){
+
+
+
             // First time beacons have been seen since launch
             Log.d("beaconReference", "Saw beacons for the first time");
             Intent intent = new Intent(this, RangingActivity.class);

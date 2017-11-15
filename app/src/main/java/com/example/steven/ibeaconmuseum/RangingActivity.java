@@ -5,6 +5,7 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -35,6 +36,9 @@ public class RangingActivity extends Activity implements BeaconConsumer{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ranging);
+
+
+
         verifyBluetooth();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -79,6 +83,10 @@ public class RangingActivity extends Activity implements BeaconConsumer{
 
     @Override
     public void onBeaconServiceConnect(){
+
+        Intent intent = new Intent(this, ListViewDemo.class);
+        this.startActivity(intent);
+
         beaconManager.setRangeNotifier(new RangeNotifier() {
             @Override
             public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) {
@@ -108,6 +116,8 @@ public class RangingActivity extends Activity implements BeaconConsumer{
                     // TODO: Change UI elements to reflect readings
                     //changeui(beaconIdentifier, firstBeacon.getRssi());
                 //}
+
+
             }
         });
 
@@ -127,7 +137,7 @@ public class RangingActivity extends Activity implements BeaconConsumer{
             }
         });
     }
-    */
+
     private void logToDisplay(final String line) {
         runOnUiThread(new Runnable() {
             public void run() {
@@ -138,7 +148,7 @@ public class RangingActivity extends Activity implements BeaconConsumer{
             }
         });
     }
-
+*/
     private void updateBeaconUiList(){
         runOnUiThread(new Runnable() {
             @Override
