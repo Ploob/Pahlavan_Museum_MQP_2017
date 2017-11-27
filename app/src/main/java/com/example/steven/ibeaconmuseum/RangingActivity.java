@@ -61,33 +61,33 @@ public class RangingActivity extends ListActivity implements BeaconConsumer{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         /* TESTING CUSTOM ADAPTER */
-        setContentView(R.layout.data_object_view_layout);
-        List<DataObject> dataObjectList = new ArrayList<>();
-        DataObject dataObject = new DataObject("a", "b", "c");
-        dataObjectList.add(dataObject);
-        DataObjectAdapter dataObjectAdapter = new DataObjectAdapter(this, R.layout.data_object_view_layout, dataObjectList);
-        setListAdapter(dataObjectAdapter);
+//        setContentView(R.layout.data_object_view_layout);
+//        List<DataObject> dataObjectList = new ArrayList<>();
+//        DataObject dataObject = new DataObject("a", "b", "c");
+//        dataObjectList.add(dataObject);
+//        DataObjectAdapter dataObjectAdapter = new DataObjectAdapter(this, R.layout.data_object_view_layout, dataObjectList);
+//        setListAdapter(dataObjectAdapter);
 
         /* HERE DOWN REMOVED FOR CUSTOM ADAPTER SETTINGS */
 
-        //setContentView(R.layout.activity_ranging);
-        //ListView listView = (ListView)findViewById(R.id.listView);
+        setContentView(R.layout.activity_ranging);
+        //ListView listView = (ListView)findViewById(R.id.);
 
         // AlgorithmManager bound to new instance
-        //algorithmManager = new AlgorithmManager();
+        algorithmManager = new AlgorithmManager();
 
         // Set up the adapter for the listBeaconsInRange
-        //adapterBeaconsInRange=new ArrayAdapter<>(this,
-        //        android.R.layout.simple_list_item_1,
-        //        listBeaconsInRange);
-        //setListAdapter(adapterBeaconsInRange);
+        adapterBeaconsInRange=new ArrayAdapter<>(this,
+                android.R.layout.simple_list_item_1,
+                listBeaconsInRange);
+        setListAdapter(adapterBeaconsInRange);
 
         // Verify that bluetooth and location permissions are enabled and capable of running correctly
-        //verifyBluetooth();
-        //verifyLocation();
+        verifyBluetooth();
+        verifyLocation();
 
         // Bind a BeaconManager to this activity
-        //beaconManager.bind(this);
+        beaconManager.bind(this);
     }
 
     // On exiting and destroying the activity
