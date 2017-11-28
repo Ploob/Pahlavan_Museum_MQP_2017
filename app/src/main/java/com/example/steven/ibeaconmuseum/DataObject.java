@@ -1,4 +1,4 @@
-package com.example.steven.ibeaconmuseum.DataObject;
+package com.example.steven.ibeaconmuseum;
 
 /**
  * Created by Steven on 11/15/2017.

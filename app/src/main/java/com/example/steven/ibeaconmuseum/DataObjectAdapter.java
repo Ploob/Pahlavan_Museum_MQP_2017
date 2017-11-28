@@ -1,4 +1,4 @@
-package com.example.steven.ibeaconmuseum.DataObject;
+package com.example.steven.ibeaconmuseum;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import com.example.steven.ibeaconmuseum.DataObject;
 import com.example.steven.ibeaconmuseum.R;
 
 import java.util.List;

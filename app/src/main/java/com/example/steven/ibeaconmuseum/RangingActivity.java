@@ -10,10 +10,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
-
-import com.example.steven.ibeaconmuseum.DataObject.DataObject;
-import com.example.steven.ibeaconmuseum.DataObject.DataObjectAdapter;
 
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.BeaconConsumer;
@@ -22,12 +18,10 @@ import org.altbeacon.beacon.Identifier;
 import org.altbeacon.beacon.RangeNotifier;
 import org.altbeacon.beacon.Region;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
