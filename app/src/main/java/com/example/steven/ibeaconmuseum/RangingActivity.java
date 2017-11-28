@@ -102,16 +102,17 @@ public class RangingActivity extends Activity implements BeaconConsumer{
                 if(beacons.size() > 0){
                     for(Iterator<Beacon> iterator = beacons.iterator(); iterator.hasNext();){ // For each beacon seen; references the beacons collection
                         Beacon thisBeacon = iterator.next();
-                        Identifier beaconMajor = thisBeacon.getId2();
-                        Identifier beaconMinor = thisBeacon.getId3();
-                        Integer beaconRssi = thisBeacon.getRssi();
-                        if(seenBeaconsHashmap.get(beaconMinor) == null){
-                            seenBeaconsHashmap.put(beaconMinor, new DataObject("Major: " + beaconMajor.toString(), "Minor: " + beaconMinor.toString(), "RSSI:" + beaconRssi));
-                        }else{
-                            seenBeaconsHashmap.get(beaconMinor).setCenter("RSSI: " + beaconRssi);
-                        }
+//                        Identifier beaconMajor = thisBeacon.getId2();
+//                        Identifier beaconMinor = thisBeacon.getId3();
+//                        Integer beaconRssi = thisBeacon.getRssi();
+//                        if(seenBeaconsHashmap.get(beaconMinor) == null){
+//                            seenBeaconsHashmap.put(beaconMinor, new DataObject("Major: " + beaconMajor.toString(), "Minor: " + beaconMinor.toString(), "RSSI:" + beaconRssi));
+//                        }else{
+//                            seenBeaconsHashmap.get(beaconMinor).setCenter("RSSI: " + beaconRssi);
+//                        }
                         Log.d("STEVEN", "updating beacon ui list");
-                        updateBeaconUiList();
+                        //updateBeaconUiList();
+                        processBeacon(thisBeacon);
                     }
                 }
             }
@@ -137,6 +138,28 @@ public class RangingActivity extends Activity implements BeaconConsumer{
                 dataObjectAdapter.notifyDataSetChanged();
             }
         });
+    }
+
+    // Possible replacement for the RunOnUiThread, avoid concurrent HashMap access problem?
+    private void processBeacon(Beacon beacon){
+        Identifier beaconMajor = beacon.getId2();
+        Identifier beaconMinor = beacon.getId3();
+        Integer beaconRssi = beacon.getRssi();
+        //if(seenBeaconsHashmap.get(beaconMinor) == null){
+            seenBeaconsHashmap.put(beaconMinor, new DataObject("Major: " + beaconMajor.toString(), "Minor: " + beaconMinor.toString(), "RSSI:" + beaconRssi));
+        //}else{
+        //    seenBeaconsHashmap.get(beaconMinor).setCenter("RSSI: " + beaconRssi);
+        //}
+
+        seenBeaconsDataObjectList.clear(); // Empty the existing list
+        Iterator iterator = seenBeaconsHashmap.entrySet().iterator();
+        while(iterator.hasNext()){ // For each item in the seenBeaconsHashMap
+            Map.Entry mentry = (Map.Entry)iterator.next();
+            seenBeaconsDataObjectList.add((DataObject)mentry.getValue());
+            //iterator.remove();
+        }
+        dataObjectAdapter.notifyDataSetChanged();
+
     }
 
     // Verify that bluetooth is enabled
