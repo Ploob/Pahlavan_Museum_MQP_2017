@@ -26,4 +26,14 @@ public class DataObject {
         return this.center;
     }
 
+    public void setLeft(String s){
+        this.left = s;
+    }
+    public void setRight(String s){
+        this.right = s;
+    }
+    public void setCenter(String s){
+        this.center = s;
+    }
+
 }
