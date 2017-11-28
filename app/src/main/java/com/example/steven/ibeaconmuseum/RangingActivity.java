@@ -98,6 +98,7 @@ public class RangingActivity extends Activity implements BeaconConsumer{
         beaconManager.setRangeNotifier(new RangeNotifier() {
             @Override
             public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) {
+                Log.d("STEVEN", "updating beacon ui list");
                 if(beacons.size() > 0){
                     for(Iterator<Beacon> iterator = beacons.iterator(); iterator.hasNext();){ // For each beacon seen; references the beacons collection
                         Beacon thisBeacon = iterator.next();
@@ -109,6 +110,7 @@ public class RangingActivity extends Activity implements BeaconConsumer{
                         }else{
                             seenBeaconsHashmap.get(beaconMinor).setCenter("RSSI: " + beaconRssi);
                         }
+                        Log.d("STEVEN", "updating beacon ui list");
                         updateBeaconUiList();
                     }
                 }
@@ -129,7 +131,8 @@ public class RangingActivity extends Activity implements BeaconConsumer{
                 Iterator iterator = seenBeaconsHashmap.entrySet().iterator();
                 while(iterator.hasNext()){ // For each item in the seenBeaconsHashMap
                     Map.Entry mentry = (Map.Entry)iterator.next();
-                    seenBeaconsDataObjectList.add(seenBeaconsHashmap.get(mentry.getKey()));
+                    seenBeaconsDataObjectList.add((DataObject)mentry.getValue());
+                    //iterator.remove();
                 }
                 dataObjectAdapter.notifyDataSetChanged();
             }
