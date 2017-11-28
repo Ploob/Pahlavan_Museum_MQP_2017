@@ -1,4 +1,4 @@
-package com.example.steven.ibeaconmuseum.DataObject;
+package com.example.steven.ibeaconmuseum;
 
 /**
  * Created by Steven on 11/15/2017.
@@ -12,7 +12,7 @@ public class DataObject {
 
     public DataObject(String left, String right, String center){
         this.left = left;
-        this.right =right;
+        this.right = right;
         this.center = center;
     }
 
@@ -25,4 +25,5 @@ public class DataObject {
     public String getCenter(){
         return this.center;
     }
+
 }

@@ -5,15 +5,12 @@ import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
-
-import com.example.steven.ibeaconmuseum.DataObject.DataObject;
-import com.example.steven.ibeaconmuseum.DataObject.DataObjectAdapter;
 
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.BeaconConsumer;
@@ -22,12 +19,10 @@ import org.altbeacon.beacon.Identifier;
 import org.altbeacon.beacon.RangeNotifier;
 import org.altbeacon.beacon.Region;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -37,13 +32,15 @@ public class RangingActivity extends ListActivity implements BeaconConsumer{
     // Removed upon creation of clickable UI
     // TODO Update to ArrayList<DataObject> once adapter is built
     ArrayList<String> listBeaconsInRange = new ArrayList<>();
+    ArrayList<DataObject> listDataObjects = new ArrayList<>();
 
     // ListView adapter for managing the list of nearby beacons
     // Changed upon creation of custom adapter for museum data object
     // TODO Create custom adapter for DataObject
     ArrayAdapter<String> adapterBeaconsInRange;
+    //DataObjectAdapter dataObjectAdapter;
 
-    // AlgorithmManager isntance for use in calculation
+    // AlgorithmManager instance for use in calculation
     private AlgorithmManager algorithmManager;
 
     // BeaconManager for this RangingActivity
@@ -60,34 +57,41 @@ public class RangingActivity extends ListActivity implements BeaconConsumer{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Intent intent = new Intent(this, ListViewDemo.class);
+        this.startActivity(intent);
         /* TESTING CUSTOM ADAPTER */
-//        setContentView(R.layout.data_object_view_layout);
+//        setContentView(R.layout.main_layout_dataobject);
 //        List<DataObject> dataObjectList = new ArrayList<>();
 //        DataObject dataObject = new DataObject("a", "b", "c");
 //        dataObjectList.add(dataObject);
+//        ListView myListView = (ListView) findViewById(R.id.listView);
 //        DataObjectAdapter dataObjectAdapter = new DataObjectAdapter(this, R.layout.data_object_view_layout, dataObjectList);
-//        setListAdapter(dataObjectAdapter);
+//        myListView.setAdapter(dataObjectAdapter);
+      //
+      //  setListAdapter(dataObjectAdapter);
+        //DataObjectAdapter dataObjectAdapter = new DataObjectAdapter(this, R.layout.data_object_view_layout, dataObjectList);
+
 
         /* HERE DOWN REMOVED FOR CUSTOM ADAPTER SETTINGS */
 
-        setContentView(R.layout.activity_ranging);
-        //ListView listView = (ListView)findViewById(R.id.);
-
-        // AlgorithmManager bound to new instance
-        algorithmManager = new AlgorithmManager();
-
-        // Set up the adapter for the listBeaconsInRange
-        adapterBeaconsInRange=new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_1,
-                listBeaconsInRange);
-        setListAdapter(adapterBeaconsInRange);
-
-        // Verify that bluetooth and location permissions are enabled and capable of running correctly
-        verifyBluetooth();
-        verifyLocation();
-
-        // Bind a BeaconManager to this activity
-        beaconManager.bind(this);
+//        setContentView(R.layout.activity_ranging);
+//        //ListView listView = (ListView)findViewById(R.id.);
+//
+//        // AlgorithmManager bound to new instance
+//        algorithmManager = new AlgorithmManager();
+//
+//        // Set up the adapter for the listBeaconsInRange
+//        adapterBeaconsInRange=new ArrayAdapter<>(this,
+//                android.R.layout.simple_list_item_1,
+//                listBeaconsInRange);
+//        setListAdapter(adapterBeaconsInRange);
+//
+//        // Verify that bluetooth and location permissions are enabled and capable of running correctly
+//        verifyBluetooth();
+//        verifyLocation();
+//
+//        // Bind a BeaconManager to this activity
+//        beaconManager.bind(this);
     }
 
     // On exiting and destroying the activity

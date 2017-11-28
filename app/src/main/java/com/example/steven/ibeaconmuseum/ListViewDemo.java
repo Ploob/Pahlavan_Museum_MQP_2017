@@ -1,38 +1,30 @@
 package com.example.steven.ibeaconmuseum;
 
-import android.app.ListActivity;
-import android.support.v7.app.AppCompatActivity;
+import android.app.Activity;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.ArrayAdapter;
+import android.support.v7.app.AppCompatActivity;
+import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.List;
+
 // TODO CLASS TO BE REMOVED
-public class ListViewDemo extends ListActivity {
-
-    //LIST OF ARRAY STRINGS WHICH WILL SERVE AS LIST ITEMS
-    ArrayList<String> listItems=new ArrayList<String>();
-
-    //DEFINING A STRING ADAPTER WHICH WILL HANDLE THE DATA OF THE LISTVIEW
-    ArrayAdapter<String> adapter;
-
-    //RECORDING HOW MANY TIMES THE BUTTON HAS BEEN CLICKED
-    int clickCounter=0;
-
+public class ListViewDemo extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_list_view_demo);
-        adapter=new ArrayAdapter<String>(this,
-                android.R.layout.simple_list_item_1,
-                listItems);
-        setListAdapter(adapter);
-    }
+        setContentView(R.layout.main_layout_dataobject);
 
-    //METHOD WHICH WILL HANDLE DYNAMIC INSERTION
-    public void addItems(View v) {
-        listItems.add("Clicked : "+clickCounter++);
-        adapter.notifyDataSetChanged();
+        List<DataObject> dataObjectList = new ArrayList<>();
+        DataObject dataObject = new DataObject("a", "b", "c");
+        DataObject dataObject2 = new DataObject("d", "e", "f");
+
+        dataObjectList.add(dataObject);
+        dataObjectList.add(dataObject2);
+        ListView listView = (ListView)findViewById(R.id.listView);
+        DataObjectAdapter dataObjectAdapter = new DataObjectAdapter(this, R.layout.data_object_view_layout, dataObjectList);
+        listView.setAdapter(dataObjectAdapter);
+        //dataObjectAdapter.notifyDataSetChanged();
     }
 }

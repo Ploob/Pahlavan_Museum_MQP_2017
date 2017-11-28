@@ -48,7 +48,9 @@ public class BeaconReference extends Application implements BootstrapNotifier{
 
             // First time beacons have been seen since launch
             Log.d("beaconReference", "Saw beacons for the first time");
+            //Intent intent = new Intent(this, RangingActivity.class);
             Intent intent = new Intent(this, RangingActivity.class);
+
             this.startActivity(intent);
             haveDetectedBeaconsSinceBoot = true;
         }else{
