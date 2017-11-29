@@ -15,6 +15,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.ListView;
 
 
+import com.example.steven.ibeaconmuseum.LocationClasses.PointOfInterest;
+
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.BeaconConsumer;
 import org.altbeacon.beacon.BeaconManager;
@@ -32,7 +34,7 @@ import java.util.Map;
 // This class does most of the heavy lifting for the application
 // TODO: Replace DataObject with POIs and needed objects for mapping
 //TESTING
-public class RangingActivity extends AppCompatActivity implements BeaconConsumer{
+public class MainBeaconScanning extends AppCompatActivity implements BeaconConsumer{
 
     // List of DataObject which contain seen beacon information
     List<DataObject> seenBeaconsDataObjectList = new ArrayList<>();
@@ -43,7 +45,7 @@ public class RangingActivity extends AppCompatActivity implements BeaconConsumer
     // ListView UI element used for displaying seenBeaconsDataObjectList
     ListView seenBeaconsDataObjectListView;
 
-    // BeaconManager for this RangingActivity: manages all beacons interaction this activity performs
+    // BeaconManager for this MainBeaconScanning: manages all beacons interaction this activity performs
     private BeaconManager beaconManager = BeaconManager.getInstanceForApplication(this);
 
     // HashMap containing the beacon minor ID as the key and a DataObject to represent the seen beacon
@@ -56,10 +58,11 @@ public class RangingActivity extends AppCompatActivity implements BeaconConsumer
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_ranging);
+        setContentView(R.layout.point_of_interest_listview_layout);
 
         // Instantiate the DataObjectAdapter used to manage the list of DataObject to display
         dataObjectAdapter = new DataObjectAdapter(this, R.layout.data_object_view_layout, seenBeaconsDataObjectList);
+//        dataObjectAdapter = new DataObjectAdapter(this, R.layout.point_of_interest_list_element_layout, seenBeaconsDataObjectList);
 
         // Find the ListView used in the layout, and assign the DataObject adapter to it
         seenBeaconsDataObjectListView = (ListView) findViewById(R.id.listView);
@@ -108,6 +111,7 @@ public class RangingActivity extends AppCompatActivity implements BeaconConsumer
                         Integer beaconRssi = thisBeacon.getRssi();
                         if (seenBeaconsHashmap.get(beaconMinor) == null) {
                             seenBeaconsHashmap.put(beaconMinor, new DataObject("Major: " + beaconMajor, "Minor: " + beaconMinor, "RSSI: " + beaconRssi));
+//                            seenBeaconsHashmap.put(beaconMinor, new PointOfInterest("Major: " + beaconMajor, "Minor: " + beaconMinor, "RSSI: " + beaconRssi));
                         } else {
                             seenBeaconsHashmap.get(beaconMinor).setCenter("RSSI: " + beaconRssi);
                         }

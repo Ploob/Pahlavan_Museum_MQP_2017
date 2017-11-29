@@ -7,12 +7,6 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-<<<<<<< HEAD:app/src/main/java/com/example/steven/ibeaconmuseum/DataObjectAdapter.java
-import com.example.steven.ibeaconmuseum.DataObject;
-import com.example.steven.ibeaconmuseum.R;
-
-=======
->>>>>>> Custom-Adapter:app/src/main/java/com/example/steven/ibeaconmuseum/DataObjectAdapter.java
 import java.util.List;
 
 public class DataObjectAdapter extends ArrayAdapter<DataObject>{

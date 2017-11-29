@@ -8,7 +8,7 @@ import org.altbeacon.beacon.Region;
 import org.altbeacon.beacon.powersave.BackgroundPowerSaver;
 import org.altbeacon.beacon.startup.BootstrapNotifier;
 
-public class BeaconReference extends Application implements BootstrapNotifier{
+public class BeaconInit extends Application implements BootstrapNotifier{
 
     // BLE packet contents, change to search per id and manufacturer
     // 0x4c000215 is the Apple iBeacon manu. code
@@ -37,7 +37,7 @@ public class BeaconReference extends Application implements BootstrapNotifier{
     public void didEnterRegion(Region arg0){
         if(!haveDetectedBeaconsSinceBoot){
             // First time beacons have been seen since launch
-            Intent intent = new Intent(this, RangingActivity.class);
+            Intent intent = new Intent(this, MainBeaconScanning.class);
             this.startActivity(intent);
             haveDetectedBeaconsSinceBoot = true;
         }else{
