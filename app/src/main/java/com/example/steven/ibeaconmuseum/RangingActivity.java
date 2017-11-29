@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 // This class does most of the heavy lifting for the application
+// TODO: Replace DataObject with POIs and needed objects for mapping
 public class RangingActivity extends AppCompatActivity implements BeaconConsumer{
 
     // List of DataObject which contain seen beacon information
