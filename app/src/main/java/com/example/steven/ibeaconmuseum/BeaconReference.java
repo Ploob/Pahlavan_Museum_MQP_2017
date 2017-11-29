@@ -2,28 +2,20 @@ package com.example.steven.ibeaconmuseum;
 
 import android.app.Application;
 import android.content.Intent;
-import android.util.Log;
 import org.altbeacon.beacon.BeaconManager;
 import org.altbeacon.beacon.BeaconParser;
 import org.altbeacon.beacon.Region;
 import org.altbeacon.beacon.powersave.BackgroundPowerSaver;
 import org.altbeacon.beacon.startup.BootstrapNotifier;
 
-/*
-The central code for starting monitoring on a region, etc.
-May be depreciated at a later date, but for now holds init code
-Moves to external classes with layouts, etc.
- */
-
 public class BeaconReference extends Application implements BootstrapNotifier{
 
     // BLE packet contents, change to search per id and manufacturer
-    // 0x4c000215 is the iBeacon manu. code
+    // 0x4c000215 is the Apple iBeacon manu. code
     private static final String blePacketString = "m:0-3=4c000215,i:4-19,i:20-21,i:22-23,p:24-24";
 
-    private BackgroundPowerSaver backgroundPowerSaver;
+    // Boolean for first time beacon detection
     private boolean haveDetectedBeaconsSinceBoot;
-    private RangingActivity rangingActivity = null;
 
     @Override
     public void onCreate() {
@@ -31,23 +23,20 @@ public class BeaconReference extends Application implements BootstrapNotifier{
         // Specifying the altBeacon manager, since there are multiple libraries with the same name
         BeaconManager beaconManager = org.altbeacon.beacon.BeaconManager.getInstanceForApplication(this);
 
+        // Assign the BeaconManager a filter to exclude non-iBeacon packets
         beaconManager.getBeaconParsers().clear();
         beaconManager.getBeaconParsers().add(new BeaconParser().
             setBeaconLayout(blePacketString));
 
         // Creating allows the app to go into low power mode when no beacons are seen
-        backgroundPowerSaver = new BackgroundPowerSaver(this);
+        BackgroundPowerSaver backgroundPowerSaver = new BackgroundPowerSaver(this);
     }
 
-
+    // Upon entering the region
     @Override
     public void didEnterRegion(Region arg0){
         if(!haveDetectedBeaconsSinceBoot){
-
-
-
             // First time beacons have been seen since launch
-            Log.d("beaconReference", "Saw beacons for the first time");
             Intent intent = new Intent(this, RangingActivity.class);
             this.startActivity(intent);
             haveDetectedBeaconsSinceBoot = true;
@@ -56,25 +45,16 @@ public class BeaconReference extends Application implements BootstrapNotifier{
         }
     }
 
+    // Upon exiting the region
     @Override
     public void didExitRegion(Region region){
 
     }
 
+    // Upon determining the current state of the region
     @Override
     public void didDetermineStateForRegion(int state, Region region) {
-        //if (rangingActivity != null) {
-        //    rangingActivity.logToDisplay("I have just switched from seeing/not seeing beacons: " + state);
-        //}
-    }
 
-    /*
-    @Override
-    public void onBeaconServiceConnect(){
-        Intent intent = new Intent(this, RangingActivity.class);
-        this.startActivity(intent);
-        haveDetectedBeaconsSinceBoot = true;
     }
-    */
 
 }

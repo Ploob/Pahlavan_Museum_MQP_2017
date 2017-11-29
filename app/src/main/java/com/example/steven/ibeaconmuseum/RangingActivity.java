@@ -3,13 +3,17 @@ package com.example.steven.ibeaconmuseum;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
-import android.app.ListActivity;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.RemoteException;
+<<<<<<< HEAD
 import android.widget.ArrayAdapter;
+=======
+import android.support.v7.app.AppCompatActivity;
+import android.widget.ListView;
+>>>>>>> Custom-Adapter
 
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.BeaconConsumer;
@@ -23,29 +27,25 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 
-public class RangingActivity extends ListActivity implements BeaconConsumer{
+// This class does most of the heavy lifting for the application
+// TODO: Replace DataObject with POIs and needed objects for mapping
+public class RangingActivity extends AppCompatActivity implements BeaconConsumer{
 
-    // List of Strings to display in ListView for each near beacon
-    // Removed upon creation of clickable UI
-    // TODO Update to ArrayList<DataObject> once adapter is built
-    ArrayList<String> listBeaconsInRange = new ArrayList<>();
+    // List of DataObject which contain seen beacon information
+    List<DataObject> seenBeaconsDataObjectList = new ArrayList<>();
 
-    // ListView adapter for managing the list of nearby beacons
-    // Changed upon creation of custom adapter for museum data object
-    // TODO Create custom adapter for DataObject
-    ArrayAdapter<String> adapterBeaconsInRange;
+    // Custom ListView adapter for creating a ListView of DataObjects
+    DataObjectAdapter dataObjectAdapter;
 
-    // AlgorithmManager isntance for use in calculation
-    private AlgorithmManager algorithmManager;
+    // ListView UI element used for displaying seenBeaconsDataObjectList
+    ListView seenBeaconsDataObjectListView;
 
-    // BeaconManager for this RangingActivity
+    // BeaconManager for this RangingActivity: manages all beacons interaction this activity performs
     private BeaconManager beaconManager = BeaconManager.getInstanceForApplication(this);
-    //private LinkedList<Identifier> seenIdentifiers = new LinkedList<Identifier>(){}; // List of UUIDs seen so far by the phone
 
-    // HashMap containing the beacon minor ID as the key and the last known RSSI as the value
-    private HashMap<Identifier, Integer> seenBeaconsHashmap = new HashMap<>();
+    // HashMap containing the beacon minor ID as the key and a DataObject to represent the seen beacon
+    private HashMap<Identifier, DataObject> seenBeaconsHashmap = new HashMap<>();
 
     // Constant for requesting permission verbosely
     private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
@@ -54,27 +54,14 @@ public class RangingActivity extends ListActivity implements BeaconConsumer{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        /* TESTING CUSTOM ADAPTER */
-//        setContentView(R.layout.data_object_view_layout);
-//        List<DataObject> dataObjectList = new ArrayList<>();
-//        DataObject dataObject = new DataObject("a", "b", "c");
-//        dataObjectList.add(dataObject);
-//        DataObjectAdapter dataObjectAdapter = new DataObjectAdapter(this, R.layout.data_object_view_layout, dataObjectList);
-//        setListAdapter(dataObjectAdapter);
-
-        /* HERE DOWN REMOVED FOR CUSTOM ADAPTER SETTINGS */
-
         setContentView(R.layout.activity_ranging);
-        //ListView listView = (ListView)findViewById(R.id.);
 
-        // AlgorithmManager bound to new instance
-        algorithmManager = new AlgorithmManager();
+        // Instantiate the DataObjectAdapter used to manage the list of DataObject to display
+        dataObjectAdapter = new DataObjectAdapter(this, R.layout.data_object_view_layout, seenBeaconsDataObjectList);
 
-        // Set up the adapter for the listBeaconsInRange
-        adapterBeaconsInRange=new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_1,
-                listBeaconsInRange);
-        setListAdapter(adapterBeaconsInRange);
+        // Find the ListView used in the layout, and assign the DataObject adapter to it
+        seenBeaconsDataObjectListView = (ListView) findViewById(R.id.listView);
+        seenBeaconsDataObjectListView.setAdapter(dataObjectAdapter);
 
         // Verify that bluetooth and location permissions are enabled and capable of running correctly
         verifyBluetooth();
@@ -114,8 +101,16 @@ public class RangingActivity extends ListActivity implements BeaconConsumer{
                 if(beacons.size() > 0){
                     for(Iterator<Beacon> iterator = beacons.iterator(); iterator.hasNext();){ // For each beacon seen; references the beacons collection
                         Beacon thisBeacon = iterator.next();
-                        seenBeaconsHashmap.put(thisBeacon.getId3(), thisBeacon.getRssi());
+                        Identifier beaconMajor = thisBeacon.getId2();
+                        Identifier beaconMinor = thisBeacon.getId3();
+                        Integer beaconRssi = thisBeacon.getRssi();
+                        if (seenBeaconsHashmap.get(beaconMinor) == null) {
+                            seenBeaconsHashmap.put(beaconMinor, new DataObject("Major: " + beaconMajor, "Minor: " + beaconMinor, "RSSI: " + beaconRssi));
+                        } else {
+                            seenBeaconsHashmap.get(beaconMinor).setCenter("RSSI: " + beaconRssi);
+                        }
                         updateBeaconUiList();
+
                     }
                 }
             }
@@ -126,22 +121,17 @@ public class RangingActivity extends ListActivity implements BeaconConsumer{
     }
 
     // Updating the list of Beacons seen
-    // TODO Turn into a list of DataObjects instead
     private void updateBeaconUiList(){
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                listBeaconsInRange.clear(); // Empty the existing list
-                Set set = seenBeaconsHashmap.entrySet();
-                Iterator iterator = set.iterator();
-                while(iterator.hasNext()){ // For each item in the seenbeaconshashmap
-                    Map.Entry mentry = (Map.Entry)iterator.next();
-                    //editTextContents = editTextContents + "Minor ID: " + mentry.getKey().toString() + "RSSI: " + mentry.getValue().toString() + '\n';
-                    listBeaconsInRange.add("Minor ID: " + mentry.getKey().toString() + '\n' + "RSSI: " +
-                            //algorithmManager.pathLossDistance((int)mentry.getValue(), 2.6, -60));
-                            mentry.getValue().toString());
+                seenBeaconsDataObjectList.clear(); // Empty the existing list
+                Iterator iterator = seenBeaconsHashmap.entrySet().iterator();
+                while(iterator.hasNext()){ // For each item in the seenBeaconsHashMap
+                    Map.Entry<Identifier, DataObject> mentry = (Map.Entry)iterator.next();
+                    seenBeaconsDataObjectList.add((DataObject)mentry.getValue());
                 }
-                adapterBeaconsInRange.notifyDataSetChanged();
+                dataObjectAdapter.notifyDataSetChanged();
             }
         });
     }

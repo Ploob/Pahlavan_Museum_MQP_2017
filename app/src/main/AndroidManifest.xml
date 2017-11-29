@@ -24,13 +24,22 @@
             android:name=".RangingActivity"
             android:label="@string/title_activity_ranging"
             android:theme="@style/AppTheme.NoActionBar">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
-        <activity android:name=".ListViewDemo"></activity>
+        <activity
+            android:name=".ListViewDemo"
+            android:label="ListViewDemo"
+            android:theme="@style/AppTheme.NoActionBar">
+
+
+
+        </activity>
     </application>
 
 </manifest>

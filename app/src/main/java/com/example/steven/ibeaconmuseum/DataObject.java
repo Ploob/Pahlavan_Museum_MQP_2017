@@ -12,7 +12,7 @@ public class DataObject {
 
     public DataObject(String left, String right, String center){
         this.left = left;
-        this.right =right;
+        this.right = right;
         this.center = center;
     }
 
@@ -25,4 +25,15 @@ public class DataObject {
     public String getCenter(){
         return this.center;
     }
+
+    public void setLeft(String s){
+        this.left = s;
+    }
+    public void setRight(String s){
+        this.right = s;
+    }
+    public void setCenter(String s){
+        this.center = s;
+    }
+
 }
