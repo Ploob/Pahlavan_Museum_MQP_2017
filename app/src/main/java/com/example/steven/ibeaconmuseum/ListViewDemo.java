@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 // TODO CLASS TO BE REMOVED
+// Class currently exists to test isolated ListView implementations
 public class ListViewDemo extends AppCompatActivity {
 
     @Override
