@@ -8,12 +8,12 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.RemoteException;
-<<<<<<< HEAD
+
 import android.widget.ArrayAdapter;
-=======
+
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ListView;
->>>>>>> Custom-Adapter
+
 
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.BeaconConsumer;
@@ -26,10 +26,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 // This class does most of the heavy lifting for the application
 // TODO: Replace DataObject with POIs and needed objects for mapping
+//TESTING
 public class RangingActivity extends AppCompatActivity implements BeaconConsumer{
 
     // List of DataObject which contain seen beacon information
