@@ -12,9 +12,11 @@ import android.os.RemoteException;
 import android.widget.ArrayAdapter;
 
 import android.support.v7.app.AppCompatActivity;
+import android.widget.EditText;
 import android.widget.ListView;
 
 
+import com.example.steven.ibeaconmuseum.LocationClasses.GridPoint;
 import com.example.steven.ibeaconmuseum.LocationClasses.PointOfInterest;
 
 import org.altbeacon.beacon.Beacon;
@@ -54,12 +56,22 @@ public class MainBeaconScanning extends AppCompatActivity implements BeaconConsu
     // Constant for requesting permission verbosely
     private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
 
+    // TODO: Remove after testing
+    private ArrayList<Beacon> seenBeaconList;
+    public AlgorithmTestbed algorithmTestbed = new AlgorithmTestbed();
+
     // On creating the activity; all initializations occur here
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //TODO Switch back after testing
         setContentView(R.layout.point_of_interest_listview_layout);
+        //setContentView(R.layout.algorithm_testbed_layout);
 
+        //TODO Remove after testing
+        seenBeaconList = new ArrayList<Beacon>();
+
+        // TODO Uncomment block
         // Instantiate the DataObjectAdapter used to manage the list of DataObject to display
         dataObjectAdapter = new DataObjectAdapter(this, R.layout.data_object_view_layout, seenBeaconsDataObjectList);
 //        dataObjectAdapter = new DataObjectAdapter(this, R.layout.point_of_interest_list_element_layout, seenBeaconsDataObjectList);
@@ -67,7 +79,7 @@ public class MainBeaconScanning extends AppCompatActivity implements BeaconConsu
         // Find the ListView used in the layout, and assign the DataObject adapter to it
         seenBeaconsDataObjectListView = (ListView) findViewById(R.id.listView);
         seenBeaconsDataObjectListView.setAdapter(dataObjectAdapter);
-
+// TODO End of uncomment block
         // Verify that bluetooth and location permissions are enabled and capable of running correctly
         verifyBluetooth();
         verifyLocation();
@@ -104,20 +116,25 @@ public class MainBeaconScanning extends AppCompatActivity implements BeaconConsu
             @Override
             public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) {
                 if(beacons.size() > 0){
+                    seenBeaconList.clear(); // TODO Remove
                     for(Iterator<Beacon> iterator = beacons.iterator(); iterator.hasNext();){ // For each beacon seen; references the beacons collection
                         Beacon thisBeacon = iterator.next();
                         Identifier beaconMajor = thisBeacon.getId2();
                         Identifier beaconMinor = thisBeacon.getId3();
                         Integer beaconRssi = thisBeacon.getRssi();
+                        seenBeaconList.add(thisBeacon);
                         if (seenBeaconsHashmap.get(beaconMinor) == null) {
                             seenBeaconsHashmap.put(beaconMinor, new DataObject("Major: " + beaconMajor, "Minor: " + beaconMinor, "RSSI: " + beaconRssi));
 //                            seenBeaconsHashmap.put(beaconMinor, new PointOfInterest("Major: " + beaconMajor, "Minor: " + beaconMinor, "RSSI: " + beaconRssi));
                         } else {
                             seenBeaconsHashmap.get(beaconMinor).setCenter("RSSI: " + beaconRssi);
                         }
-                        updateBeaconUiList();
+
 
                     }
+                    updateBeaconUiList();
+
+
                 }
             }
         });
@@ -138,6 +155,17 @@ public class MainBeaconScanning extends AppCompatActivity implements BeaconConsu
                     seenBeaconsDataObjectList.add((DataObject)mentry.getValue());
                 }
                 dataObjectAdapter.notifyDataSetChanged();
+
+
+                // TODO Remove
+                GridPoint gp = algorithmTestbed.newMethod(seenBeaconList);
+                EditText editTextX = findViewById(R.id.editTextX);
+                EditText editTextY = findViewById(R.id.editTextY);
+                //editTextX.setText(gp.x);
+                editTextX.setText("a");
+                //editTextY.setText(gp.y);
+                editTextY.setText("b");
+
             }
         });
     }
