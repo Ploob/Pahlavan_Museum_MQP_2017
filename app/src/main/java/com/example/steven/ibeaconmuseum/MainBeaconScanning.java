@@ -161,10 +161,10 @@ public class MainBeaconScanning extends AppCompatActivity implements BeaconConsu
                 GridPoint gp = algorithmTestbed.newMethod(seenBeaconList);
                 EditText editTextX = findViewById(R.id.editTextX);
                 EditText editTextY = findViewById(R.id.editTextY);
-                //editTextX.setText(gp.x);
-                editTextX.setText("a");
-                //editTextY.setText(gp.y);
-                editTextY.setText("b");
+                editTextX.setText(Double.toString(gp.x));
+                //editTextX.setText("a");
+                editTextY.setText(Double.toString(gp.y));
+                //editTextY.setText("b");
 
             }
         });

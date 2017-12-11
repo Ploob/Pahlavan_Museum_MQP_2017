@@ -24,16 +24,16 @@ public class LocationRoomMap {
 
     public LocationRoomMap(GridPoint[][] roomGrid, GridPoint[] poiLoc, PointOfInterest[] pois, GridPoint[] beaconLoc, Identifier[] beacons){
         this.roomGrid = roomGrid;
-
+//TODO remake
         // Place each poi in the hashmap
         for(int i=0; i < poiLoc.length; i++){
-            gridToPoi.put(roomGrid[poiLoc[i].x][poiLoc[i].y], pois[i]);
+            //gridToPoi.put(roomGrid[poiLoc[i].x][poiLoc[i].y], pois[i]);
         }
 
         // Place each beacon in the hashmap
         for(int i=0; i<beaconLoc.length; i++){
-            gridToBeacon.put(roomGrid[beaconLoc[i].x][beaconLoc[i].y], beacons[i]);
-            beaconToGrid.put(beacons[i], roomGrid[beaconLoc[i].x][beaconLoc[i].y]);
+            //gridToBeacon.put(roomGrid[beaconLoc[i].x][beaconLoc[i].y], beacons[i]);
+            //beaconToGrid.put(beacons[i], roomGrid[beaconLoc[i].x][beaconLoc[i].y]);
         }
     }
 
