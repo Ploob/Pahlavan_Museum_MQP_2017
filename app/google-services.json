@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "659979506818",
+    "firebase_url": "https://pahlavan-mqp-2017-museum.firebaseio.com",
+    "project_id": "pahlavan-mqp-2017-museum",
+    "storage_bucket": "pahlavan-mqp-2017-museum.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:659979506818:android:0a626ff381b98665",
+        "android_client_info": {
+          "package_name": "com.example.steven.ibeaconmuseum"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "659979506818-13ref2iops5lmc691d8drmouql64085i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCeLDHfPkpnLKLiqNO3euQy_lso03t_Qzw"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
