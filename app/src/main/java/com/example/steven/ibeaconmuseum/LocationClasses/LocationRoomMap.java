@@ -27,7 +27,7 @@ public class LocationRoomMap {
 //TODO remake
         // Place each poi in the hashmap
         for(int i=0; i < poiLoc.length; i++){
-            //gridToPoi.put(roomGrid[poiLoc[i].x][poiLoc[i].y], pois[i]);
+            gridToPoi.put(roomGrid[poiLoc[i].x][poiLoc[i].y], pois[i]);
         }
 
         // Place each beacon in the hashmap

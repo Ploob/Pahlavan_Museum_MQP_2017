@@ -22,8 +22,8 @@ public class AlgorithmTestbed {
     public AlgorithmTestbed(){}
 
     public GridPoint newMethod(List<Beacon> beacons){
-        //return new GridPoint(-1,-1);
-        return new GridPoint(sigma * sqrt(2) * Erf.erfcInv(2-2*0.9), -1);
+        return new GridPoint(-1,-1);
+        //return new GridPoint(sigma * sqrt(2) * Erf.erfcInv(2-2*0.9), -1);
     }
 
 

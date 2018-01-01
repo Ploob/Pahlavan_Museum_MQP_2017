@@ -6,10 +6,10 @@ package com.example.steven.ibeaconmuseum.LocationClasses;
 
 public class GridPoint {
 
-    public double x;
-    public double y;
+    public int x;
+    public int y;
 
-    public GridPoint(double x, double y){
+    public GridPoint(int x, int y){
 
         this.x = x;
         this.y = y;
