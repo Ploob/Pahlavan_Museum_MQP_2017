@@ -15,6 +15,7 @@ import static java.lang.Math.*;
     HashMap.get(
 
  */
+// TODO REMOVE CLASS, DEPRECIATED IN FAVOR OF LOCATIONROOM HOLDING ALL INFO ON THE ROOM
 public class LocationRoomMap {
 
     public GridPoint[][] roomGrid;
