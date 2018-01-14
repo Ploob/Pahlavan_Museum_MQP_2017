@@ -14,10 +14,13 @@ import android.widget.ArrayAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 
 
 import com.example.steven.ibeaconmuseum.LocationClasses.GridPoint;
 import com.example.steven.ibeaconmuseum.LocationClasses.PointOfInterest;
+import com.example.steven.ibeaconmuseum.LocationClasses.PointOfInterestListElement;
+import com.example.steven.ibeaconmuseum.LocationClasses.PointOfInterestListElementAdapter;
 
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.BeaconConsumer;
@@ -39,19 +42,24 @@ import java.util.Map;
 public class MainBeaconScanning extends AppCompatActivity implements BeaconConsumer{
 
     // List of DataObject which contain seen beacon information
-    List<DataObject> seenBeaconsDataObjectList = new ArrayList<>();
+//    List<DataObject> seenBeaconsDataObjectList = new ArrayList<>();
+    List<PointOfInterestListElement> seenBeaconsPointOfInterestListElementList = new ArrayList<>();
 
     // Custom ListView adapter for creating a ListView of DataObjects
-    DataObjectAdapter dataObjectAdapter;
+//    DataObjectAdapter dataObjectAdapter;
+    PointOfInterestListElementAdapter pointOfInterestListElementAdapter;
 
     // ListView UI element used for displaying seenBeaconsDataObjectList
-    ListView seenBeaconsDataObjectListView;
+//    ListView seenBeaconsDataObjectListView;
+    ListView seenBeaconsPointOfInterestListElementListView;
 
     // BeaconManager for this MainBeaconScanning: manages all beacons interaction this activity performs
     private BeaconManager beaconManager = BeaconManager.getInstanceForApplication(this);
 
+
     // HashMap containing the beacon minor ID as the key and a DataObject to represent the seen beacon
-    private HashMap<Identifier, DataObject> seenBeaconsHashmap = new HashMap<>();
+//    private HashMap<Identifier, DataObject> seenBeaconsHashmap = new HashMap<>();
+    private HashMap<Identifier, PointOfInterestListElement> seenBeaconsHashmap = new HashMap<>();
 
     // Constant for requesting permission verbosely
     private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
@@ -65,20 +73,24 @@ public class MainBeaconScanning extends AppCompatActivity implements BeaconConsu
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //TODO Switch back after testing
-        setContentView(R.layout.point_of_interest_listview_layout);
-        //setContentView(R.layout.algorithm_testbed_layout);
+        //setContentView(R.layout.point_of_interest_listview_layout);
+        setContentView(R.layout.algorithm_testbed_layout);
 
         //TODO Remove after testing
         seenBeaconList = new ArrayList<Beacon>();
 
         // TODO Uncomment block
         // Instantiate the DataObjectAdapter used to manage the list of DataObject to display
-        dataObjectAdapter = new DataObjectAdapter(this, R.layout.data_object_view_layout, seenBeaconsDataObjectList);
+//        dataObjectAdapter = new DataObjectAdapter(this, R.layout.data_object_view_layout, seenBeaconsDataObjectList);
 //        dataObjectAdapter = new DataObjectAdapter(this, R.layout.point_of_interest_list_element_layout, seenBeaconsDataObjectList);
+        pointOfInterestListElementAdapter = new PointOfInterestListElementAdapter(this, R.layout.point_of_interest_list_element_layout, seenBeaconsPointOfInterestListElementList);
 
         // Find the ListView used in the layout, and assign the DataObject adapter to it
-        seenBeaconsDataObjectListView = (ListView) findViewById(R.id.listView);
-        seenBeaconsDataObjectListView.setAdapter(dataObjectAdapter);
+        //seenBeaconsDataObjectListView = (ListView) findViewById(R.id.listView);
+        seenBeaconsPointOfInterestListElementListView = (ListView) findViewById(R.id.listView);
+//        seenBeaconsDataObjectListView.setAdapter(dataObjectAdapter);
+        seenBeaconsPointOfInterestListElementListView.setAdapter(pointOfInterestListElementAdapter);
+
 // TODO End of uncomment block
         // Verify that bluetooth and location permissions are enabled and capable of running correctly
         verifyBluetooth();
@@ -124,7 +136,8 @@ public class MainBeaconScanning extends AppCompatActivity implements BeaconConsu
                         Integer beaconRssi = thisBeacon.getRssi();
                         seenBeaconList.add(thisBeacon);
                         if (seenBeaconsHashmap.get(beaconMinor) == null) {
-                            seenBeaconsHashmap.put(beaconMinor, new DataObject("Major: " + beaconMajor, "Minor: " + beaconMinor, "RSSI: " + beaconRssi));
+//                            seenBeaconsHashmap.put(beaconMinor, new DataObject("Major: " + beaconMajor, "Minor: " + beaconMinor, "RSSI: " + beaconRssi));
+                            seenBeaconsHashmap.put(beaconMinor, new PointOfInterestListElement("Major: " + beaconMajor, "Minor: " + beaconMinor, "RSSI: " + beaconRssi));
 //                            seenBeaconsHashmap.put(beaconMinor, new PointOfInterest("Major: " + beaconMajor, "Minor: " + beaconMinor, "RSSI: " + beaconRssi));
                         } else {
                             seenBeaconsHashmap.get(beaconMinor).setCenter("RSSI: " + beaconRssi);
@@ -133,6 +146,7 @@ public class MainBeaconScanning extends AppCompatActivity implements BeaconConsu
 
                     }
                     updateBeaconUiList();
+                    // TODO Track multiple readings, curve/average/etc
 
 
                 }
@@ -148,22 +162,26 @@ public class MainBeaconScanning extends AppCompatActivity implements BeaconConsu
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                seenBeaconsDataObjectList.clear(); // Empty the existing list
+//                seenBeaconsDataObjectList.clear(); // Empty the existing list
+                seenBeaconsPointOfInterestListElementList.clear();
                 Iterator iterator = seenBeaconsHashmap.entrySet().iterator();
                 while(iterator.hasNext()){ // For each item in the seenBeaconsHashMap
-                    Map.Entry<Identifier, DataObject> mentry = (Map.Entry)iterator.next();
-                    seenBeaconsDataObjectList.add((DataObject)mentry.getValue());
+                    Map.Entry<Identifier, PointOfInterestListElement> mentry = (Map.Entry)iterator.next();
+//                    seenBeaconsDataObjectList.add((PointOfInterestListElement)mentry.getValue());
+                    seenBeaconsPointOfInterestListElementList.add((PointOfInterestListElement)mentry.getValue());
                 }
-                dataObjectAdapter.notifyDataSetChanged();
-
+//                dataObjectAdapter.notifyDataSetChanged();
+                pointOfInterestListElementAdapter.notifyDataSetChanged();
 
                 // TODO Remove
                 GridPoint gp = algorithmTestbed.newMethod(seenBeaconList);
-                EditText editTextX = findViewById(R.id.editTextX);
-                EditText editTextY = findViewById(R.id.editTextY);
-                editTextX.setText(Double.toString(gp.x));
+                TextView editTextCoord = findViewById(R.id.coordinateLocation);
+                editTextCoord.setText(String.format("(" + gp.x + ", " + gp.y + ")"));
+//                EditText editTextX = findViewById(R.id.editTextX);
+//                EditText editTextY = findViewById(R.id.editTextY);
+//                editTextX.setText(Double.toString(gp.x));
                 //editTextX.setText("a");
-                editTextY.setText(Double.toString(gp.y));
+//                editTextY.setText(Double.toString(gp.y));
                 //editTextY.setText("b");
 
             }

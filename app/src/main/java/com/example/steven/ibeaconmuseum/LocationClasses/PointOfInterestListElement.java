@@ -1,11 +1,35 @@
 package com.example.steven.ibeaconmuseum.LocationClasses;
 
-import org.altbeacon.beacon.Identifier;
-
-/**
- * Created by Steven on 11/28/2017.
- */
-
 public class PointOfInterestListElement {
+
+    private String left;
+    private String right;
+    private String center;
+
+    public PointOfInterestListElement(String left, String right, String center){
+        this.left = left;
+        this.right = right;
+        this.center = center;
+    }
+
+    public String getLeft() {
+        return left;
+    }
+    public String getRight() {
+        return right;
+    }
+    public String getCenter() {
+        return center;
+    }
+
+    public void setLeft(String left) {
+        this.left = left;
+    }
+    public void setRight(String right) {
+        this.right = right;
+    }
+    public void setCenter(String center) {
+        this.center = center;
+    }
 
 }

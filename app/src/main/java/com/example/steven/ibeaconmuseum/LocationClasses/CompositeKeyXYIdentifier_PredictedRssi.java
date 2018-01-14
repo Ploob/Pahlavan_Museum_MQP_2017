@@ -4,10 +4,7 @@ import org.altbeacon.beacon.Identifier;
 
 import java.util.Objects;
 
-/**
- * Created by Steven on 1/5/2018.
- */
-
+// TODO Remove class, used cleaner method and this is not used elsewhere (hopefully)
 public final class CompositeKeyXYIdentifier_PredictedRssi {
 
     private final int x;

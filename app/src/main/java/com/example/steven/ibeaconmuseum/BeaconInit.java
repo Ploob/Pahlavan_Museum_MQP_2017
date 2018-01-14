@@ -2,6 +2,8 @@ package com.example.steven.ibeaconmuseum;
 
 import android.app.Application;
 import android.content.Intent;
+import android.os.RemoteException;
+
 import org.altbeacon.beacon.BeaconManager;
 import org.altbeacon.beacon.BeaconParser;
 import org.altbeacon.beacon.Region;
@@ -22,6 +24,13 @@ public class BeaconInit extends Application implements BootstrapNotifier{
         super.onCreate();
         // Specifying the altBeacon manager, since there are multiple libraries with the same name
         BeaconManager beaconManager = org.altbeacon.beacon.BeaconManager.getInstanceForApplication(this);
+
+        // Set the number of ms between each scan, and the number of ms per scan
+        beaconManager.setForegroundBetweenScanPeriod(500);
+        beaconManager.setForegroundScanPeriod(500);
+        try {
+            beaconManager.updateScanPeriods();
+        } catch (RemoteException e) {}
 
         // Assign the BeaconManager a filter to exclude non-iBeacon packets
         beaconManager.getBeaconParsers().clear();

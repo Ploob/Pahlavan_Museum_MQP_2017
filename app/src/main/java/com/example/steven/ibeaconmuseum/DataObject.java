@@ -1,9 +1,5 @@
 package com.example.steven.ibeaconmuseum;
 
-/**
- * Created by Steven on 11/15/2017.
- */
-
 public class DataObject {
 
     private String left;
