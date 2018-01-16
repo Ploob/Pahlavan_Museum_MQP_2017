@@ -1,5 +1,6 @@
 package com.example.steven.ibeaconmuseum;
 
+// TODO Remove class, depreciated
 public class DataObject {
 
     private String left;

@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import java.util.List;
 
+// TODO Depreciated, remove
 public class DataObjectAdapter extends ArrayAdapter<DataObject>{
 
     private int layoutResource;
