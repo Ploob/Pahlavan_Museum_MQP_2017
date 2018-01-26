@@ -14,7 +14,8 @@ public class BeaconInit extends Application implements BootstrapNotifier{
 
     // BLE packet contents, change to search per id and manufacturer
     // 0x4c000215 is the Apple iBeacon manu. code
-    private static final String blePacketString = "m:0-3=4c000215,i:4-19,i:20-21,i:22-23,p:24-24";
+    private static final String blePacketString = "m:0-3=4c000215,i:4-19,i:20-21=4e20,i:22-23,p:24-24";
+//    private static final String blePacketString = "m:0-3,i:4-19,i:20-21,i:22-23,p:24-24";
 
     // Boolean for first time beacon detection
     private boolean haveDetectedBeaconsSinceBoot;
@@ -26,16 +27,17 @@ public class BeaconInit extends Application implements BootstrapNotifier{
         BeaconManager beaconManager = org.altbeacon.beacon.BeaconManager.getInstanceForApplication(this);
 
         // Set the number of ms between each scan, and the number of ms per scan
-        beaconManager.setForegroundBetweenScanPeriod(500);
-        beaconManager.setForegroundScanPeriod(500);
+//        beaconManager.setForegroundBetweenScanPeriod(500);
+//        beaconManager.setForegroundScanPeriod(500);
         try {
             beaconManager.updateScanPeriods();
         } catch (RemoteException e) {}
 
         // Assign the BeaconManager a filter to exclude non-iBeacon packets
         beaconManager.getBeaconParsers().clear();
+        // TODO Packet filter, add in or modify as needed
         beaconManager.getBeaconParsers().add(new BeaconParser().
-            setBeaconLayout(blePacketString));
+                setBeaconLayout(blePacketString));
 
         // Creating allows the app to go into low power mode when no beacons are seen
         BackgroundPowerSaver backgroundPowerSaver = new BackgroundPowerSaver(this);

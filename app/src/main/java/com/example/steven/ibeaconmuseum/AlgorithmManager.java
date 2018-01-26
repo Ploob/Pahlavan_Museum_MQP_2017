@@ -2,13 +2,16 @@ package com.example.steven.ibeaconmuseum;
 
 import com.example.steven.ibeaconmuseum.LocationClasses.GridPoint;
 import com.example.steven.ibeaconmuseum.LocationClasses.LocationRoom;
-import com.example.steven.ibeaconmuseum.LocationClasses.ReadingBeaconPair;
 
 import org.altbeacon.beacon.Beacon;
+import org.altbeacon.beacon.Identifier;
 import org.apache.commons.math3.special.Erf;
 
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import static java.lang.Math.*;
 
@@ -18,7 +21,12 @@ public class AlgorithmManager {
     public double certainty; // % certainty of a signal
     public double dbTolerance; // DB tolerance to be within based on the sigma and certainty
     public double granularity; // X by X points of measurement per square meter
-    public ReadingBeaconPair[][] predictedReadings; // 2d array holding a ReadingBeaconPair per spot, each which has a hashmap of IDs -> readings predicted
+//    public ReadingBeaconPair[][] predictedReadings; // 2d array holding a ReadingBeaconPair per spot, each which has a hashmap of IDs -> readings predicted
+//    public GenericPair<Identifier, Double>[][] predictedReadings;
+//    public ArrayList<GenericPair<Identifier, Double>>[][] predictedReadings ;
+//    public GenericPairList[][] predictedReadings;
+
+
 
     // Initialization requires a sigma, certainty target, and granularity (units per meter)
     public AlgorithmManager(double sigma, double certainty, double granularity){
@@ -34,31 +42,49 @@ public class AlgorithmManager {
         Returns a GridPoint which contains the X and Y closest to the predicted coordinate within the given room based on the beacons
         TODO: Import set of data rather than one set of readings
      */
-    public GridPoint MaximumLikelihoodRoomLocation(LocationRoom room, List<Beacon> readBeacons){
+    public GridPoint MaximumLikelihoodRoomLocation(LocationRoom room, GenericPairList readBeacons){
+
+        HashMap<Integer, Double> minorToReading = new HashMap<>(); // Given the minor value, return the rssi read from a beacon of that minor
+        for(int i=0; i<readBeacons.list.size(); i++){
+            GenericPair gp = readBeacons.list.get(i);
+            minorToReading.put((Integer)gp.getFirst(), (Double)gp.getSecond());
+        }
+
+        // Fill the array of predicted readings, predictedReadings
         int xdim = room.xdim;
         int ydim = room.ydim;
-        predictedReadings = new ReadingBeaconPair[xdim][ydim]; // Table for holding the predicted readings
-        initPredictedReadings(room); // Fill out the table of predicted readings
-        int[][] score = new int[xdim][ydim]; // Matrix for holding the scores for each point in the room
+        PredictedReadingHashMap[][] predictedReadings = new PredictedReadingHashMap[xdim][ydim];
+        for(int j=0; j<ydim; j++){
+            for(int i=0; i<xdim; i++){
+                for(int k=0; k<room.listBeacons.size(); k++){
+                    Double prssi = pathLoss(-60, room.roomAlpha, meterDistanceBetween(granularity,
+                            room.listBeaconsLoc.get(k).x, room.listBeaconsLoc.get(k).y, i, j));
+                    predictedReadings[i][j].hm.put(room.listBeacons.get(k).toInt(), prssi);
+                }
+            }
+        }
 
+        // Begin filling the score matrix with values
+        int[][] score = new int[xdim][ydim]; // Matrix for holding the scores for each point in the room
         // Move through and score each point
         // TODO: Handle not seeing a point
-        int scoreTotal = 0;
+        int scoreTotal;
         for(int j=0; j<ydim; j++){
             for(int i=0; i<xdim; i++){
                 scoreTotal = 0;
-                for(int k=0; k<readBeacons.size(); k++){
-                    Beacon thisBeacon = readBeacons.get(k);
-                    double readRssi = thisBeacon.getRssi();
-                    double predictedRssi = predictedReadings[i][j].readingMap.get(thisBeacon.getId3());
-//                    if(predictedRssi == null){
-//                      TODO: Possibly check for no return from the hashmap, if somehow incorrect beacons made it through
-//                    }
-                    if(abs(readRssi - predictedRssi) <= dbTolerance){ // Difference between read and measured within dbTolerance
+                // For each beacon in the minorToReadng list, hitting each of the read beacons
+                Iterator iterator = minorToReading.entrySet().iterator();
+                while(iterator.hasNext()){
+                    Map.Entry<Integer, Double> mentry = (Map.Entry)iterator.next();
+                    double readRssi = mentry.getValue();
+                    double predictedRssi = predictedReadings[i][j].hm.get(mentry.getKey());
+
+                    // Check that the differences between read and predicted are within dbTolerance
+                    if(abs(readRssi - predictedRssi) <= dbTolerance){
                         scoreTotal++;
                     }
                 }
-                score[i][j] = scoreTotal; // Set the score for i,j to the scoreTotal accumulated
+                score[i][j] = scoreTotal;
             }
         }
 
@@ -97,17 +123,24 @@ public class AlgorithmManager {
     }
 
     // Initialize the table of predicted readings
-    public void initPredictedReadings(LocationRoom room) {
-        for (int j = 0; j < room.ydim; j++) {
-            for (int i = 0; i < room.xdim; i++) {
-                for (int k = 0; k < room.listBeacons.size(); k++) {
-                    predictedReadings[i][j].readingMap.put(room.listBeacons.get(k), pathLoss(-60, room.roomAlpha,
-                            meterDistanceBetween(this.granularity,
-                                    i, j, room.listBeaconsLoc.get(k).x, room.listBeaconsLoc.get(k).y)));
-                }
-            }
-        }
-    }
+//    private boolean initPredictedReadings(LocationRoom room) {
+//
+//
+//        for (int j = 0; j < room.ydim; j++) {
+//            for (int i = 0; i < room.xdim; i++) {
+//                for (int k = 0; k < room.listBeacons.size(); k++) {
+//                    // TODO Replace hasmap with a pair of information
+////                    predictedReadings[i][j].readingMap.put(room.listBeacons.get(k), pathLoss(-60, room.roomAlpha,
+////                            meterDistanceBetween(this.granularity,
+////                                    i, j, room.listBeaconsLoc.get(k).x, room.listBeaconsLoc.get(k).y)));
+//                    double pl = pathLoss(-60, room.roomAlpha,
+//                            meterDistanceBetween(this.granularity,
+//                                    i, j, room.listBeaconsLoc.get(k).x, room.listBeaconsLoc.get(k).y));
+//                    predictedReadings[i][j].list.add(new GenericPair<Identifier, Double>(room.listBeacons.get(k), pl));
+//                }
+//            }
+//        }
+//    }
 
     // Path Loss equation, takes P0, alpha, and the distance in meters, returns the dB ratio
     public double pathLoss(double p0, double alpha, double distance){

@@ -25,6 +25,7 @@ import com.example.steven.ibeaconmuseum.LocationClasses.PointOfInterestListEleme
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.BeaconConsumer;
 import org.altbeacon.beacon.BeaconManager;
+import org.altbeacon.beacon.BeaconParser;
 import org.altbeacon.beacon.Identifier;
 import org.altbeacon.beacon.RangeNotifier;
 import org.altbeacon.beacon.Region;
@@ -40,6 +41,9 @@ import java.util.Map;
 // TODO: Replace DataObject with POIs and needed objects for mapping
 //TESTING
 public class MainBeaconScanning extends AppCompatActivity implements BeaconConsumer{
+
+//    private static final String blePacketString = "m:0-3=4c000215,i:4-19,i:20-21=4e20,i:22-23,p:24-24";
+
 
     // List of DataObject which contain seen beacon information
 //    List<DataObject> seenBeaconsDataObjectList = new ArrayList<>();
@@ -59,13 +63,13 @@ public class MainBeaconScanning extends AppCompatActivity implements BeaconConsu
 
     // HashMap containing the beacon minor ID as the key and a DataObject to represent the seen beacon
 //    private HashMap<Identifier, DataObject> seenBeaconsHashmap = new HashMap<>();
-    private HashMap<Identifier, PointOfInterestListElement> seenBeaconsHashmap = new HashMap<>();
+    private HashMap<Identifier, PointOfInterestListElement> seenBeaconsHashmapListElement = new HashMap<>();
 
     // Constant for requesting permission verbosely
     private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
 
     // TODO: Remove after testing
-    private ArrayList<Beacon> seenBeaconList;
+//    private ArrayList<Beacon> seenBeaconList;
     public AlgorithmTestbed algorithmTestbed = new AlgorithmTestbed();
 
     // On creating the activity; all initializations occur here
@@ -77,7 +81,7 @@ public class MainBeaconScanning extends AppCompatActivity implements BeaconConsu
         setContentView(R.layout.algorithm_testbed_layout);
 
         //TODO Remove after testing
-        seenBeaconList = new ArrayList<Beacon>();
+//        seenBeaconList = new ArrayList<Beacon>();
 
         // TODO Uncomment block
         // Instantiate the DataObjectAdapter used to manage the list of DataObject to display
@@ -96,7 +100,9 @@ public class MainBeaconScanning extends AppCompatActivity implements BeaconConsu
         verifyBluetooth();
         verifyLocation();
 
-        // Bind a BeaconManager to this activity
+//        // Bind a BeaconManager to this activity
+//        beaconManager.getBeaconParsers().add(new BeaconParser().
+//                setBeaconLayout(blePacketString));// TODO Remove if broken
         beaconManager.bind(this);
     }
 
@@ -128,23 +134,39 @@ public class MainBeaconScanning extends AppCompatActivity implements BeaconConsu
             @Override
             public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) {
                 if(beacons.size() > 0){
-                    seenBeaconList.clear(); // TODO Remove
+
+                    ArrayList<GenericPair<Identifier, Double>> b = new ArrayList<>();
+                    Identifier selectedMajor = Identifier.fromInt(25000); // What major ID to include
+
                     for(Iterator<Beacon> iterator = beacons.iterator(); iterator.hasNext();){ // For each beacon seen; references the beacons collection
                         Beacon thisBeacon = iterator.next();
                         Identifier beaconMajor = thisBeacon.getId2();
                         Identifier beaconMinor = thisBeacon.getId3();
                         Integer beaconRssi = thisBeacon.getRssi();
-                        seenBeaconList.add(thisBeacon);
-                        if (seenBeaconsHashmap.get(beaconMinor) == null) {
-//                            seenBeaconsHashmap.put(beaconMinor, new DataObject("Major: " + beaconMajor, "Minor: " + beaconMinor, "RSSI: " + beaconRssi));
-                            seenBeaconsHashmap.put(beaconMinor, new PointOfInterestListElement("Major: " + beaconMajor, "Minor: " + beaconMinor, "RSSI: " + beaconRssi));
-//                            seenBeaconsHashmap.put(beaconMinor, new PointOfInterest("Major: " + beaconMajor, "Minor: " + beaconMinor, "RSSI: " + beaconRssi));
-                        } else {
-                            seenBeaconsHashmap.get(beaconMinor).setCenter("RSSI: " + beaconRssi);
+
+                        if(beaconMajor == selectedMajor){ // Add the beacon of the correct major to the list of usable readings for this sweep
+                            b.add(new GenericPair<Identifier, Double>(beaconMinor, (double)beaconRssi));
                         }
+
+                        // TODO Find a better way to check for majorID
+//                        if(beaconMajor.toInt() == 20000) {
+//                            seenBeaconList.add(thisBeacon);
+                            if (seenBeaconsHashmapListElement.get(beaconMinor) == null) {
+//                            seenBeaconsHashmap.put(beaconMinor, new DataObject("Major: " + beaconMajor, "Minor: " + beaconMinor, "RSSI: " + beaconRssi));
+                                seenBeaconsHashmapListElement.put(beaconMinor, new PointOfInterestListElement("Major: " + beaconMajor, "Minor: " + beaconMinor, "RSSI: " + beaconRssi));
+//                            seenBeaconsHashmap.put(beaconMinor, new PointOfInterest("Major: " + beaconMajor, "Minor: " + beaconMinor, "RSSI: " + beaconRssi));
+                            } else {
+                                seenBeaconsHashmapListElement.get(beaconMinor).setCenter("RSSI: " + beaconRssi);
+                            }
+//                        }
 
 
                     }
+
+                    GridPoint gp = algorithmTestbed.newMethod(new GenericPairList(b)); // Run the algorithm on the list of beacons
+                    TextView editTextCoord = findViewById(R.id.coordinateLocation);
+                    editTextCoord.setText(String.format("(" + gp.x + ", " + gp.y + ")"));
+
                     updateBeaconUiList();
                     // TODO Track multiple readings, curve/average/etc
 
@@ -164,8 +186,8 @@ public class MainBeaconScanning extends AppCompatActivity implements BeaconConsu
             public void run() {
 //                seenBeaconsDataObjectList.clear(); // Empty the existing list
                 seenBeaconsPointOfInterestListElementList.clear();
-                Iterator iterator = seenBeaconsHashmap.entrySet().iterator();
-                while(iterator.hasNext()){ // For each item in the seenBeaconsHashMap
+                Iterator iterator = seenBeaconsHashmapListElement.entrySet().iterator();
+                while(iterator.hasNext()){ // For each item in the seenBeaconsHashMapListElement
                     Map.Entry<Identifier, PointOfInterestListElement> mentry = (Map.Entry)iterator.next();
 //                    seenBeaconsDataObjectList.add((PointOfInterestListElement)mentry.getValue());
                     seenBeaconsPointOfInterestListElementList.add((PointOfInterestListElement)mentry.getValue());
@@ -173,10 +195,6 @@ public class MainBeaconScanning extends AppCompatActivity implements BeaconConsu
 //                dataObjectAdapter.notifyDataSetChanged();
                 pointOfInterestListElementAdapter.notifyDataSetChanged();
 
-                // TODO Remove
-                GridPoint gp = algorithmTestbed.newMethod(seenBeaconList);
-                TextView editTextCoord = findViewById(R.id.coordinateLocation);
-                editTextCoord.setText(String.format("(" + gp.x + ", " + gp.y + ")"));
 //                EditText editTextX = findViewById(R.id.editTextX);
 //                EditText editTextY = findViewById(R.id.editTextY);
 //                editTextX.setText(Double.toString(gp.x));
