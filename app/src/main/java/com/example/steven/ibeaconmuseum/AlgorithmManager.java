@@ -3,14 +3,11 @@ package com.example.steven.ibeaconmuseum;
 import com.example.steven.ibeaconmuseum.LocationClasses.GridPoint;
 import com.example.steven.ibeaconmuseum.LocationClasses.LocationRoom;
 
-import org.altbeacon.beacon.Beacon;
-import org.altbeacon.beacon.Identifier;
 import org.apache.commons.math3.special.Erf;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 import static java.lang.Math.*;
@@ -21,13 +18,7 @@ public class AlgorithmManager {
     public double certainty; // % certainty of a signal
     public double dbTolerance; // DB tolerance to be within based on the sigma and certainty
     public double granularity; // X by X points of measurement per square meter
-//    public ReadingBeaconPair[][] predictedReadings; // 2d array holding a ReadingBeaconPair per spot, each which has a hashmap of IDs -> readings predicted
-//    public GenericPair<Identifier, Double>[][] predictedReadings;
-//    public ArrayList<GenericPair<Identifier, Double>>[][] predictedReadings ;
-//    public GenericPairList[][] predictedReadings;
-
-
-
+    private GridPoint ERROR_GRIDPOINT = new GridPoint(-1,-1);
     // Initialization requires a sigma, certainty target, and granularity (units per meter)
     public AlgorithmManager(double sigma, double certainty, double granularity){
         this.sigma = sigma;
@@ -45,6 +36,9 @@ public class AlgorithmManager {
     public GridPoint MaximumLikelihoodRoomLocation(LocationRoom room, GenericPairList readBeacons){
 
         HashMap<Integer, Double> minorToReading = new HashMap<>(); // Given the minor value, return the rssi read from a beacon of that minor
+        if(readBeacons.list.isEmpty()){ // Return -1, -1 on empty list, meaning there are no points of the given major seen
+            return ERROR_GRIDPOINT;
+        }
         for(int i=0; i<readBeacons.list.size(); i++){
             GenericPair gp = readBeacons.list.get(i);
             minorToReading.put((Integer)gp.getFirst(), (Double)gp.getSecond());
@@ -118,29 +112,9 @@ public class AlgorithmManager {
             return new GridPoint(round(xtot/numPts), round(ytot/numPts)); // Round to the nearest point, return the resulting gridpoint
 
         }else{
-            return null; // Something got very messed up, return null and hope things will work a different time
+            return ERROR_GRIDPOINT; // Something got very messed up, return null and hope things will work a different time
         }
     }
-
-    // Initialize the table of predicted readings
-//    private boolean initPredictedReadings(LocationRoom room) {
-//
-//
-//        for (int j = 0; j < room.ydim; j++) {
-//            for (int i = 0; i < room.xdim; i++) {
-//                for (int k = 0; k < room.listBeacons.size(); k++) {
-//                    // TODO Replace hasmap with a pair of information
-////                    predictedReadings[i][j].readingMap.put(room.listBeacons.get(k), pathLoss(-60, room.roomAlpha,
-////                            meterDistanceBetween(this.granularity,
-////                                    i, j, room.listBeaconsLoc.get(k).x, room.listBeaconsLoc.get(k).y)));
-//                    double pl = pathLoss(-60, room.roomAlpha,
-//                            meterDistanceBetween(this.granularity,
-//                                    i, j, room.listBeaconsLoc.get(k).x, room.listBeaconsLoc.get(k).y));
-//                    predictedReadings[i][j].list.add(new GenericPair<Identifier, Double>(room.listBeacons.get(k), pl));
-//                }
-//            }
-//        }
-//    }
 
     // Path Loss equation, takes P0, alpha, and the distance in meters, returns the dB ratio
     public double pathLoss(double p0, double alpha, double distance){

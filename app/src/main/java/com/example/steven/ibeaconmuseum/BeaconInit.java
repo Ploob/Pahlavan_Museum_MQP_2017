@@ -48,7 +48,8 @@ public class BeaconInit extends Application implements BootstrapNotifier{
     public void didEnterRegion(Region arg0){
         if(!haveDetectedBeaconsSinceBoot){
             // First time beacons have been seen since launch
-            Intent intent = new Intent(this, MainBeaconScanning.class);
+//            Intent intent = new Intent(this, MainBeaconScanning.class);
+                Intent intent = new Intent(this, MainScanningSimple.class);
             this.startActivity(intent);
             haveDetectedBeaconsSinceBoot = true;
         }else{

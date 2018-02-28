@@ -49,7 +49,7 @@ public class AlgorithmTestbed {
         beaconArray.add(Identifier.parse("1"));
         beaconArray.add(Identifier.parse("2"));
         beaconArray.add(Identifier.parse("3"));
-        beaconArray.add(Identifier.parse("4"));
+        beaconArray.add(Identifier.parse("11"));
 
         room = new LocationRoom(roomId, alpha, xdim, ydim, new LinkedList<PointOfInterest>(){}, new LinkedList<GridPoint>(){}, beaconArray, beaconLocations );
     }
